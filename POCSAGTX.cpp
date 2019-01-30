@@ -34,18 +34,26 @@ m_delay(false)
 
 void CPOCSAGTX::process()
 {
-  if (m_poLen == 0U && m_buffer.getData() > 0U) {
-    if (!m_tx) {
-      m_delay = true;
-      m_poLen = m_txDelay;
-    } else {
+  if (m_cal) {
+    if (m_poLen == 0U) {
       m_delay = false;
-      for (uint8_t i = 0U; i < POCSAG_FRAME_LENGTH_BYTES; i++)
-        m_poBuffer[i] = m_buffer.get();
-
-      m_poLen = POCSAG_FRAME_LENGTH_BYTES;
+      createCal();
     }
-    m_poPtr = 0U;
+  }
+  else {
+    if (m_poLen == 0U && m_buffer.getData() > 0U) {
+      if (!m_tx) {
+        m_delay = true;
+        m_poLen = m_txDelay;
+      } else {
+        m_delay = false;
+        for (uint8_t i = 0U; i < POCSAG_FRAME_LENGTH_BYTES; i++)
+          m_poBuffer[i] = m_buffer.get();
+  
+        m_poLen = POCSAG_FRAME_LENGTH_BYTES;
+      }
+      m_poPtr = 0U;
+    }
   }
 
   if (m_poLen > 0U) {
@@ -106,6 +114,25 @@ void CPOCSAGTX::writeByte(uint8_t c)
 
     io.write(&bit, 1);
   }
+}
+
+void CPOCSAGTX::setCal(bool start)
+{
+  m_cal = start ? true : false;
+}
+
+void CPOCSAGTX::createCal()
+{
+  // 600 Hz square wave generation
+  if (m_calState == STATE_POCSAGCAL) {
+    for (unsigned int i = 0U; i < POCSAG_FRAME_LENGTH_BYTES; i++) {
+      m_poBuffer[i]   = 0x5FU;              // +3, +3, -3, -3 pattern for deviation cal.
+    }
+
+    m_poLen = POCSAG_FRAME_LENGTH_BYTES;
+  }
+
+  m_poPtr = 0U;
 }
 
 void CPOCSAGTX::setTXDelay(uint8_t delay)

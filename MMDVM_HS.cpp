@@ -76,6 +76,8 @@ CPOCSAGTX  pocsagTX;
 
 CCalDMR    calDMR;
 
+CCalPOCSAG calPOCSAG;
+
 #if defined(SEND_RSSI_DATA)
 CCalRSSI   calRSSI;
 #endif
@@ -125,6 +127,9 @@ void loop()
 
   if (m_calState == STATE_DMRCAL || m_calState == STATE_DMRDMO1K || m_calState == STATE_INTCAL)
     calDMR.process();
+
+  if (m_calState == STATE_POCSAGCAL)
+    calPOCSAG.process();
 
 #if defined(SEND_RSSI_DATA)
   if (m_calState == STATE_RSSICAL)

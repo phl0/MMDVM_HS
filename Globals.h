@@ -48,7 +48,8 @@ enum MMDVM_STATE {
   STATE_CWID      = 97,
   STATE_DMRCAL    = 98,
   STATE_DSTARCAL  = 99,
-  STATE_INTCAL    = 100
+  STATE_INTCAL    = 100,
+  STATE_POCSAGCAL = 101
 };
 
 const uint8_t  MARK_SLOT1 = 0x08U;
@@ -81,6 +82,7 @@ const uint8_t  MARK_NONE  = 0x00U;
 #include "CWIdTX.h"
 #include "CalRSSI.h"
 #include "CalDMR.h"
+#include "CalPOCSAG.h"
 #include "Debug.h"
 #include "Utils.h"
 
